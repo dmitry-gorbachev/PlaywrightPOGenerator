@@ -1,0 +1,24 @@
+#Testing Output folder
+output/
+.output/
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Environment
+venv/
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

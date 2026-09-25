@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Form with Checkboxes and Radio Buttons</title>
+</head>
+<body>
+    <h1>User Settings</h1>
+    <form>
+        <fieldset>
+            <legend>Notifications</legend>
+            <label>
+                <input type="checkbox" name="notifications" value="email"> Email Notifications
+            </label>
+            <label>
+                <input type="checkbox" name="notifications" value="sms"> SMS Notifications
+            </label>
+            <label>
+                <input type="checkbox" name="notifications" value="push"> Push Notifications
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <legend>Theme Preference</legend>
+            <label>
+                <input type="radio" name="theme" value="light"> Light Mode
+            </label>
+            <label>
+                <input type="radio" name="theme" value="dark"> Dark Mode
+            </label>
+            <label>
+                <input type="radio" name="theme" value="auto"> Auto
+            </label>
+        </fieldset>
+
+        <button type="submit">Update Settings</button>
+    </form>
+</body>
+</html>
