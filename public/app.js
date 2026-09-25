@@ -1,9 +1,7 @@
 // DOM Elements
 const htmlInput = document.getElementById('htmlInput');
 const fileInput = document.getElementById('fileInput');
-const languageSelect = document.getElementById('language');
 const classNameInput = document.getElementById('className');
-const includeSampleTestCheckbox = document.getElementById('includeSampleTest');
 const generateBtn = document.getElementById('generateBtn');
 const clearBtn = document.getElementById('clearBtn');
 const copyBtn = document.getElementById('copyBtn');
@@ -89,9 +87,7 @@ async function handleGenerate() {
   try {
     const formData = new FormData();
     formData.append('html', htmlContent);
-    formData.append('language', languageSelect.value);
     formData.append('className', classNameInput.value);
-    formData.append('includeSampleTest', includeSampleTestCheckbox.checked);
 
     const response = await fetch('/api/generate', {
       method: 'POST',
@@ -152,16 +148,47 @@ function displayResult(result) {
 
 // Handle copy
 function handleCopy() {
-  const code = codeOutput.textContent;
-  navigator.clipboard.writeText(code).then(() => {
+  const code = codeOutput.textContent.trim();
+
+  if (!code || code === '// Generated code will appear here...') {
+    alert('Generate code first');
+    return;
+  }
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(code).then(() => {
+      const originalText = copyBtn.textContent;
+      copyBtn.textContent = '✓ Copied!';
+      setTimeout(() => {
+        copyBtn.textContent = originalText;
+      }, 2000);
+    }).catch(() => {
+      fallbackCopy(code);
+    });
+  } else {
+    fallbackCopy(code);
+  }
+}
+
+// Fallback copy method for older browsers
+function fallbackCopy(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-999999px';
+  document.body.appendChild(textArea);
+  textArea.select();
+  try {
+    document.execCommand('copy');
     const originalText = copyBtn.textContent;
     copyBtn.textContent = '✓ Copied!';
     setTimeout(() => {
       copyBtn.textContent = originalText;
     }, 2000);
-  }).catch(() => {
+  } catch (err) {
     alert('Failed to copy to clipboard');
-  });
+  }
+  document.body.removeChild(textArea);
 }
 
 // Handle download
@@ -182,7 +209,6 @@ function handleClear() {
   htmlInput.value = '';
   fileInput.value = '';
   classNameInput.value = '';
-  includeSampleTestCheckbox.checked = false;
   codeOutput.textContent = '// Generated code will appear here...';
   classNameDisplay.textContent = '-';
   warnings.classList.add('hidden');

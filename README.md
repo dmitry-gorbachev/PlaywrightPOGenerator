@@ -21,11 +21,9 @@ A modern tool that automatically generates production-ready Playwright Page Obje
 - ARIA interactive elements
 - Disabled/hidden element detection
 
-📝 **Multi-Language Output**
-- TypeScript (Playwright Test) - default
-- JavaScript
-- Python (pytest-playwright)
-- Java
+📝 **TypeScript Output**
+- Generates production-ready TypeScript code
+- Compatible with Playwright Test
 
 🚀 **Modern Architecture**
 - Client-server application
@@ -38,15 +36,33 @@ A modern tool that automatically generates production-ready Playwright Page Obje
 
 ### Using Docker (Recommended)
 
+**Step 1: Build the image**
 ```bash
-# Build the image
 docker build -t pom-generator .
-
-# Run the container
-docker run -p 8081:8081 pom-generator
 ```
 
-The application will be accessible at `http://localhost:8081/`
+**Step 2: Run the container**
+
+Choose one of the two modes:
+
+**Option A: Detached Mode (Recommended for production)**
+```bash
+docker run -d -p 8081:8081 pom-generator
+```
+- Container runs in the background
+- Terminal returns to prompt immediately
+- Access the app at `http://localhost:8081/`
+
+**Option B: Foreground Mode (For testing/debugging)**
+```bash
+docker run -p 8081:8081 pom-generator
+```
+- Container runs in foreground
+- Terminal shows live logs
+- Terminal is blocked until you press `Ctrl+C`
+- Use this mode to see startup messages and debug issues
+
+Both modes keep the container running. The application will be accessible at `http://localhost:8081/`
 
 ### Local Development
 
@@ -83,10 +99,8 @@ The application will start on `http://localhost:8081/`
    - Paste HTML directly in the textarea, OR
    - Upload an HTML file using the file uploader
 
-2. **Configure Options**
-   - Select output language (TypeScript, JavaScript, Python, Java)
-   - Optionally set custom class name
-   - Toggle "Include sample test" option
+2. **Configure Options** (Optional)
+   - Set custom class name (auto-derived from HTML title if not provided)
 
 3. **Generate**
    - Click "Generate" button
