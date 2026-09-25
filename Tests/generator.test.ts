@@ -158,9 +158,9 @@ describe('Page Object Generator', () => {
       `;
       const result = generatePageObject(html);
       const input = result.extractedElements.find(el => el.type === 'input');
-      if (input && input.locatorStrategy === 'placeholder') {
-        expect(input.locator).toContain('placeholder');
-      }
+      expect(input).toBeDefined();
+      expect(input?.locatorStrategy).toBe('placeholder');
+      expect(input?.locator).toContain('Search');
     });
 
     it('should use getByTestId when available', () => {

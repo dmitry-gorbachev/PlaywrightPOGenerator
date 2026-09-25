@@ -13,7 +13,6 @@ RUN npm ci
 
 # Copy source code
 COPY src/ ./src/
-COPY Tests/ ./Tests/
 COPY public/ ./public/
 COPY tsconfig.json .
 
@@ -29,21 +28,25 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install production dependencies only
-RUN npm ci --only=production
+RUN npm ci --only=production && npm cache clean --force
 
 # Copy compiled code from builder
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/public ./public
 
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Create temp directory for uploads
-RUN mkdir -p .temp
+RUN mkdir -p .temp && chmod 777 .temp
 
 # Expose port
 EXPOSE 8081
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:8081/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+# Health check - allows 10s for node startup + request timeout
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:8081/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)}).on('error', () => {process.exit(1)})" || exit 1
 
-# Start the application
-CMD ["node", "dist/server.js"]
+# Use the entrypoint script
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

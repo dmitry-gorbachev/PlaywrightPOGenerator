@@ -89,6 +89,17 @@ export function generatePageObject(
     $('input[type="text"], input[type="email"], input[type="password"], input[type="search"], input:not([type])').each((_index, el) => {
       const $el = $(el);
       if ($el.closest('iframe').length === 0) {
+        // Skip bare email inputs with no semantic identifier at all
+        const inputType = $el.attr('type') || 'text';
+        const hasAnyIdentifier = $el.attr('id') || $el.attr('placeholder') || $el.attr('aria-label') ||
+                                $el.attr('data-testid') || $el.attr('data-test-id') || $el.attr('data-qa') ||
+                                $el.closest('label').length > 0;
+
+        // Only skip if it's an email input with truly no way to identify it
+        if (inputType === 'email' && !hasAnyIdentifier) {
+          return;
+        }
+
         const isDisabled = $el.attr('disabled') !== undefined;
         const elementInfo = extractElementLocator($, el, 'input', isDisabled, elementCounts);
         if (elementInfo) {
@@ -477,14 +488,6 @@ function generateMethods(elements: ElementInfo[]): string {
     methods.push(`  async ${isVisibleMethodName}(): Promise<boolean> {
     return await this.${name}.isVisible();
   }`);
-
-    // Add text getter for text-bearing elements
-    if (type === 'button' || type === 'link' || type === 'interactive') {
-      const getTextMethodName = `get${name.charAt(0).toUpperCase() + name.slice(1)}Text`;
-      methods.push(`  async ${getTextMethodName}(): Promise<string> {
-    return await this.${name}.textContent() || '';
-  }`);
-    }
   });
 
   return methods.join('\n\n');

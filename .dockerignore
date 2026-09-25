@@ -2,7 +2,6 @@ node_modules
 npm-debug.log
 .git
 .gitignore
-README.md
 dist
 .env
 .env.local
@@ -14,3 +13,7 @@ dist
 *~
 .temp
 venv
+Tests
+Test_Data
+PHASE_*.md
+PROJECT_SUMMARY.md
